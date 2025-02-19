@@ -58,7 +58,7 @@ ui <- dashboardPage(
           )
         ),
         
-        # Right subsection for checkboxes (Fraction)
+        # FRACTION SUBSECTION
         column(
           width = 6,  # Adjusted to 6 columns for each subsection
           box(
@@ -77,7 +77,7 @@ ui <- dashboardPage(
       )
     ),
     
-    # Create the "Data Downloader" section
+    # DATA DOWNLOADER BOX
     box(
       title = "Data Downloader",
       status = "success",
