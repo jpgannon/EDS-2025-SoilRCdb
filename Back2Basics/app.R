@@ -10,7 +10,7 @@ ui <- dashboardPage(
   dashboardSidebar(disable = TRUE),  # Disable the sidebar
   
   dashboardBody(
-    # Create the first box with checkboxes in the main body
+    # DATA LAYERS BOX
     box(
       title = "Data Layers",
       status = "primary",
@@ -35,7 +35,7 @@ ui <- dashboardPage(
       )
     ),
     
-    # Create the second box with subsections (Layer and Fraction)
+    # LAYER & FRACTION BOX
     box(
       title = "Layer and Fraction Settings",
       status = "primary",
@@ -135,3 +135,8 @@ server <- function(input, output) {
 
 # Run the Shiny app
 shinyApp(ui = ui, server = server)
+
+
+
+
+
