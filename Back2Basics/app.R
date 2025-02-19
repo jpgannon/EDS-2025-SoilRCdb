@@ -2,7 +2,7 @@
 library(shiny)
 library(shinydashboard)
 
-# Define the UI
+# DEFINE UI 
 ui <- dashboardPage(
   dashboardHeader(title = "Shiny App with Checkboxes and Sliders"),
   
@@ -10,6 +10,9 @@ ui <- dashboardPage(
   dashboardSidebar(disable = TRUE),  # Disable the sidebar
   
   dashboardBody(
+    
+    
+    
     # DATA LAYERS BOX
     box(
       title = "Data Layers",
@@ -34,6 +37,10 @@ ui <- dashboardPage(
         selected = NULL  # No checkboxes selected by default
       )
     ),
+    
+
+    
+    
     
     # LAYER & FRACTION BOX
     box(
@@ -77,6 +84,8 @@ ui <- dashboardPage(
       )
     ),
     
+    
+    
     # DATA DOWNLOADER BOX
     box(
       title = "Data Downloader",
@@ -109,7 +118,10 @@ ui <- dashboardPage(
   )
 )
 
-# Define the server function (can be expanded with functionality later)
+
+
+
+# SERVER FUNCTION
 server <- function(input, output) {
   # Placeholder for server-side logic (e.g., reacting to checkbox selections or sliders)
   
@@ -132,6 +144,9 @@ server <- function(input, output) {
     }
   )
 }
+
+
+
 
 # Run the Shiny app
 shinyApp(ui = ui, server = server)
