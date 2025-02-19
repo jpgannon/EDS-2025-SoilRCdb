@@ -1,5 +1,6 @@
 # Load the shiny and shinydashboard packages
 library(shiny)
+library(leaflet)
 library(shinydashboard)
 
 # Define the UI
@@ -105,6 +106,25 @@ ui <- dashboardPage(
       
       # Download button
       downloadButton("download_data", "Download")
+    ),
+    
+    box(
+      title = "Global Map",
+      status = "primary", 
+      solidHeader = TRUE,
+      width = 12,  # Full width of the box
+      fluidRow(
+        # Column for the map (takes up 9/12 of the width, or 3/4)
+        column(9,
+               leafletOutput("map", height = 600)  # The map output
+        ),
+        # Column for additional content (takes up 3/12 of the width, or 1/4)
+        column(3,
+               # You can add any other UI elements here (e.g., inputs, text, etc.)
+               h3("Additional Content"),
+               p("This is the extra content area.")
+        )
+      )
     )
   )
 )
@@ -131,6 +151,12 @@ server <- function(input, output) {
       write.csv(data, file)
     }
   )
+  
+  output$map <- renderLeaflet({
+    leaflet() %>% 
+      addTiles() %>% # Adds a default OpenStreetMap tile layer
+      setView(lng = 0, lat = 0, zoom = 1)
+    })
 }
 
 # Run the Shiny app
