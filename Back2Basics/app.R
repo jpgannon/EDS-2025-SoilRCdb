@@ -1,9 +1,8 @@
 # Load the shiny and shinydashboard packages
 library(shiny)
-library(leaflet)
 library(shinydashboard)
 
-# Define the UI
+# DEFINE UI 
 ui <- dashboardPage(
   dashboardHeader(title = "Shiny App with Checkboxes and Sliders"),
   
@@ -11,7 +10,10 @@ ui <- dashboardPage(
   dashboardSidebar(disable = TRUE),  # Disable the sidebar
   
   dashboardBody(
-    # Create the first box with checkboxes in the main body
+    
+    
+    
+    # DATA LAYERS BOX
     box(
       title = "Data Layers",
       status = "primary",
@@ -36,7 +38,11 @@ ui <- dashboardPage(
       )
     ),
     
-    # Create the second box with subsections (Layer and Fraction)
+    
+    
+    
+    
+    # LAYER & FRACTION BOX
     box(
       title = "Layer and Fraction Settings",
       status = "primary",
@@ -59,7 +65,7 @@ ui <- dashboardPage(
           )
         ),
         
-        # Right subsection for checkboxes (Fraction)
+        # FRACTION SUBSECTION
         column(
           width = 6,  # Adjusted to 6 columns for each subsection
           box(
@@ -78,7 +84,9 @@ ui <- dashboardPage(
       )
     ),
     
-    # Create the "Data Downloader" section
+    
+    
+    # DATA DOWNLOADER BOX
     box(
       title = "Data Downloader",
       status = "success",
@@ -106,30 +114,14 @@ ui <- dashboardPage(
       
       # Download button
       downloadButton("download_data", "Download")
-    ),
-    
-    box(
-      title = "Global Map",
-      status = "primary", 
-      solidHeader = TRUE,
-      width = 12,  # Full width of the box
-      fluidRow(
-        # Column for the map (takes up 9/12 of the width, or 3/4)
-        column(9,
-               leafletOutput("map", height = 600)  # The map output
-        ),
-        # Column for additional content (takes up 3/12 of the width, or 1/4)
-        column(3,
-               # You can add any other UI elements here (e.g., inputs, text, etc.)
-               h3("Additional Content"),
-               p("This is the extra content area.")
-        )
-      )
     )
   )
 )
 
-# Define the server function (can be expanded with functionality later)
+
+
+
+# SERVER FUNCTION
 server <- function(input, output) {
   # Placeholder for server-side logic (e.g., reacting to checkbox selections or sliders)
   
@@ -151,13 +143,10 @@ server <- function(input, output) {
       write.csv(data, file)
     }
   )
-  
-  output$map <- renderLeaflet({
-    leaflet() %>% 
-      addTiles() %>% # Adds a default OpenStreetMap tile layer
-      setView(lng = 0, lat = 0, zoom = 1)
-    })
 }
+
+
+
 
 # Run the Shiny app
 shinyApp(ui = ui, server = server)
