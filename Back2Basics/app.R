@@ -38,7 +38,11 @@ ui <- dashboardPage(
       )
     ),
     
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> a38c79db676f95622abb2503e089e40c28edf61f
     
     
     
@@ -149,4 +153,13 @@ server <- function(input, output) {
 
 
 # Run the Shiny app
+<<<<<<< HEAD
 shinyApp(ui = ui, server = server)
+=======
+shinyApp(ui = ui, server = server)
+
+
+
+
+
+>>>>>>> a38c79db676f95622abb2503e089e40c28edf61f
