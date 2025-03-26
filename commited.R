@@ -161,7 +161,7 @@ ui <- dashboardPage(
               )
       ),
       # ---- Map Tab ----
-      tabItem(tabName = "map",
+      tabItem(tabName = "site selection",
               fluidRow(
                 box(title = "Coordinate Filter", width = 12,
                     checkboxInput("activate_coord_filter", "Activate Coordinate Filter", value = FALSE),
