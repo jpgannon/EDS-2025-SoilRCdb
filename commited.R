@@ -161,7 +161,7 @@ ui <- dashboardPage(
               )
       ),
       # ---- Map Tab ----
-      tabItem(tabName = "site selection",
+      tabItem(tabName = "map",
               fluidRow(
                 box(title = "Coordinate Filter", width = 12,
                     checkboxInput("activate_coord_filter", "Activate Coordinate Filter", value = FALSE),
@@ -427,7 +427,7 @@ server <- function(input, output, session) {
     if (!is.null(poly)) {
       leafletProxy("map_leaflet") %>% 
         clearGroup("countryFilter") %>%
-        addPolylines(data = poly, color = "green", weight = 2, dashArray = "5,5", group = "countryFilter")
+        addPolylines(data = poly, color = "green", weight = 8, dashArray = "5,5", group = "countryFilter")
     } else {
       leafletProxy("map_leaflet") %>% clearGroup("countryFilter")
     }
