@@ -116,6 +116,12 @@ ui <- dashboardPage(
       # ---- Filters Tab ----
       tabItem(tabName = "filters",
               fluidRow(
+                box(title = "Tab Description", width = 12,
+                    "This tab is used to filter out sites from the overarching database
+                    based on filters of specific data tables. Additional filtering for
+                    Layer and Fraction tables can also be performed here.")
+              ),
+              fluidRow(
                 box(title = "Always Included", width = 12,
                     "Metadata, Site, and Profile are always included.", status = "primary")
               ),
@@ -163,6 +169,12 @@ ui <- dashboardPage(
       # ---- Map Tab ----
       tabItem(tabName = "map",
               fluidRow(
+                box(title = "Tab Description", width = 12,
+                    "This tab is used to view sites based on applied filters in Filters Tab.
+                    Users may also select sites to filter based on latitude and longitude values,
+                    drawn polygons, or country.")
+              ),
+              fluidRow(
                 box(title = "Coordinate Filter", width = 12,
                     checkboxInput("activate_coord_filter", "Activate Coordinate Filter", value = FALSE),
                     conditionalPanel(
@@ -193,6 +205,11 @@ ui <- dashboardPage(
       # ---- Summary Tab ----
       tabItem(tabName = "summary",
               fluidRow(
+                box(title = "Tab Description", width = 12,
+                    "This tab is used to view summary statistics of data, showing 
+                    how many entries are in each table based on user filtering.")
+                ),
+              fluidRow(
                 box(title = "Summary Statistics", width = 12,
                     tableOutput("summary_table"),
                     status = "primary")
@@ -200,6 +217,12 @@ ui <- dashboardPage(
       ),
       # ---- Download Tab ----
       tabItem(tabName = "download",
+              fluidRow(
+                box(title = "Tab Description", width = 12,
+                    "This tab is used to preview data to be downloaded, select
+                    additional constraints for data, search through selected data,
+                    and download selected data to a .csv file.")
+                ),
               fluidRow(
                 box(title = "Download Options", width = 6,
                     radioButtons("download_cols", "Columns to Download:",
@@ -217,6 +240,10 @@ ui <- dashboardPage(
       ),
       # ---- Data Display Tab ----
       tabItem(tabName = "display",
+                fluidRow(
+                box(title = "Tab Description", width = 12,
+                    "This tab is used to display data based on user filters.")
+                ),
               fluidRow(
                 box(title = "Flattened Data (Filtered)", width = 12,
                     DTOutput("site_table"),
@@ -226,6 +253,7 @@ ui <- dashboardPage(
     )
   )
 )
+
 
 ### 3. Server Definition
 server <- function(input, output, session) {
