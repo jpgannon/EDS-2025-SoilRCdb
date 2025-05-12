@@ -1,0 +1,13 @@
+name: Final
+title: Final
+username: i4fvaw-ethan-harris
+account: i4fvaw-ethan-harris
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 14634049
+bundleId: 10193794
+url: https://i4fvaw-ethan-harris.shinyapps.io/Final/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: Soil.qmd
