@@ -18,7 +18,7 @@ library(rnaturalearthdata)
 
 ### 1. Data Import (Executed only once)
 load_ISRaD_data <- function() {
-  file_url <- "https://raw.githubusercontent.com/International-Soil-Radiocarbon-Database/ISRaD/28bd3bed4346c8bcf9a7fa76df80158caac0e400/ISRaD_data_files/database/ISRaD_extra.rda"
+  file_url <- "https://raw.githubusercontent.com/International-Soil-Radiocarbon-Database/ISRaD/main/ISRaD_data_files/database/ISRaD_extra.rda"
   temp_file <- tempfile(fileext = ".rda")
   download.file(file_url, destfile = temp_file, mode = "wb")
   data_env <- new.env()
@@ -153,7 +153,7 @@ ui <- dashboardPage(
                     status = "primary")
               ),
               fluidRow(
-                box(title = "Sites Available Based on Current Filters",
+                box(title = "Studies Available Based on Current Filters",
                     width = 12,
                     textOutput("available_sites_text"),
                     status = "success")
@@ -221,11 +221,11 @@ ui <- dashboardPage(
                                  selected = "All columns"),
                     textInput("search_term", "Search across table:", value = ""),
                     status = "info"),
-                box(title = "Flattened Data Preview", width = 12,
-                    DTOutput("flat_table"),
-                    status = "info"),
                 box(title = "Download Data", width = 12,
                     downloadButton("download_csv", "Download CSV"),
+                    status = "info"),
+                box(title = "Flattened Data Preview", width = 12,
+                    DTOutput("flat_table"),
                     status = "info")
               )
       ),
@@ -388,7 +388,7 @@ server <- function(input, output, session) {
     }
     
     # Create the slider input
-    slider <- sliderInput("depth_range", "Sampling Depth Range:",
+    slider <- sliderInput("depth_range", "Sampling Depth Range (cm):",
                           min = min_depth, max = max_depth,
                           value = c(min_depth, max_depth),
                           step = 1, sep = "")
@@ -720,14 +720,14 @@ server <- function(input, output, session) {
     }
   })
   
-  # On the Filters tab, show the count of available sites (using unique entry_names).
+  # On the Filters tab, show the count of available studies (using unique entry_names).
   output$available_sites_text <- renderText({
     if (length(drawn_shapes()) > 0 || !is.null(coordinate_filter_polygon()) || !is.null(country_filter_polygon())) {
-      sites_count <- length(final_unique_entry_names())
+      studies_count <- length(final_unique_entry_names())
     } else {
-      sites_count <- length(unique(filtered_sites()$entry_name))
+      studies_count <- length(unique(filtered_sites()$entry_name))
     }
-    paste("There are", sites_count, "sites available based on the current filters.")
+    paste("There are", studies_count, "studies available based on the current filters.")
   })
   
   #### Data Display Section: Flattened Data (Filtered) ####
@@ -834,34 +834,68 @@ server <- function(input, output, session) {
   
   #### Summary Section
   output$summary_table <- renderTable({
-    flat <- flattened_data()
-    # We count using unique(entry_name) for site counts.
+    final_entries <- final_unique_entry_names()
+    
+    # Get filtered data from each table based on final entries
+    dt_meta <- ISRaD_data$metadata[ISRaD_data$metadata$entry_name %in% final_entries, ]
+    dt_site <- ISRaD_data$site[ISRaD_data$site$entry_name %in% final_entries, ]
+    dt_prof <- ISRaD_data$profile[ISRaD_data$profile$entry_name %in% final_entries, ]
+    
+    # Start with Studies, Sites, and Profiles (always included)
     summary_stats <- data.frame(
-      Table = c("Site", "Profile"),
-      Entries = c(length(unique(flat$entry_name)),
-                  length(unique(flat$pro_name))),
+      Table = c("Studies", "Sites", "Profiles"),
+      Count = c(
+        length(unique(dt_meta$entry_name)),
+        length(unique(dt_site$site_name)),
+        length(unique(dt_prof$pro_name))
+      ),
       stringsAsFactors = FALSE
     )
+    
+    # Add Layer if selected
     if ("Layer" %in% selected_tables()) {
+      dt_layer <- filtered_layer()[filtered_layer()$entry_name %in% final_entries, ]
       summary_stats <- rbind(summary_stats,
-                             data.frame(Table = "Layer", Entries = length(unique(flat$lyr_name))))
+                             data.frame(Table = "Layers", 
+                                        Count = length(unique(dt_layer$lyr_name))))
     }
-    if ("Flux" %in% selected_tables()) {
+    
+    # Add Flux if selected
+    if ("Flux" %in% selected_tables() && "flux" %in% names(ISRaD_data)) {
+      dt_flux <- ISRaD_data$flux[ISRaD_data$flux$entry_name %in% final_entries, ]
       summary_stats <- rbind(summary_stats,
-                             data.frame(Table = "Flux", Entries = length(unique(flat$flx_name))))
+                             data.frame(Table = "Fluxes", 
+                                        Count = length(unique(dt_flux$flx_name))))
     }
-    if ("Interstitial" %in% selected_tables()) {
+    
+    # Add Interstitial if selected
+    if ("Interstitial" %in% selected_tables() && "interstitial" %in% names(ISRaD_data)) {
+      dt_ist <- ISRaD_data$interstitial[ISRaD_data$interstitial$entry_name %in% final_entries, ]
       summary_stats <- rbind(summary_stats,
-                             data.frame(Table = "Interstitial", Entries = length(unique(flat$ist_name))))
+                             data.frame(Table = "Interstitials", 
+                                        Count = length(unique(dt_ist$ist_name))))
     }
-    if ("Fraction" %in% selected_tables()) {
+    
+    # Add Fraction if selected
+    if ("Fraction" %in% selected_tables() && "fraction" %in% names(ISRaD_data)) {
+      dt_frc <- ISRaD_data$fraction[ISRaD_data$fraction$entry_name %in% final_entries, ]
+      # Apply fraction scheme filter if it exists
+      if (!is.null(input$fraction_scheme) && length(input$fraction_scheme) > 0) {
+        dt_frc <- dt_frc[dt_frc$frc_scheme %in% input$fraction_scheme, ]
+      }
       summary_stats <- rbind(summary_stats,
-                             data.frame(Table = "Fraction", Entries = length(unique(flat$frc_name))))
+                             data.frame(Table = "Fractions", 
+                                        Count = length(unique(dt_frc$frc_name))))
     }
-    if ("Incubation" %in% selected_tables()) {
+    
+    # Add Incubation if selected
+    if ("Incubation" %in% selected_tables() && "incubation" %in% names(ISRaD_data)) {
+      dt_inc <- ISRaD_data$incubation[ISRaD_data$incubation$entry_name %in% final_entries, ]
       summary_stats <- rbind(summary_stats,
-                             data.frame(Table = "Incubation", Entries = length(unique(flat$inc_name))))
+                             data.frame(Table = "Incubations", 
+                                        Count = length(unique(dt_inc$inc_name))))
     }
+    
     summary_stats
   })
   
